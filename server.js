@@ -1,79 +1,29 @@
 const express = require('express');
+const path = require('path');
 const fs = require('fs');
-const bodyParser = require('body-parser');
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Configurações do middleware
-app.use(bodyParser.json());
-app.use(express.static('public'));
+// Middleware para servir arquivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota para obter os dados
+// API para acessar dados do arquivo JSON
 app.get('/api/avisos', (req, res) => {
-    fs.readFile('data.json', 'utf8', (err, data) => {
-        if (err) return res.status(500).send('Erro ao ler dados');
-        res.json(JSON.parse(data));
-    });
+  fs.readFile(path.join(__dirname, 'data.json'), 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Erro ao ler o arquivo.');
+    }
+    res.json(JSON.parse(data));
+  });
 });
 
-// Rota para adicionar um novo aviso
-app.post('/api/avisos', (req, res) => {
-    fs.readFile('data.json', 'utf8', (err, data) => {
-        if (err) return res.status(500).send('Erro ao ler dados');
-        
-        const avisos = JSON.parse(data);
-        const novoAviso = {
-            id: Date.now(),
-            docente: req.body.docente,
-            sala: req.body.sala,
-            horario: req.body.horario
-        };
-        
-        avisos.push(novoAviso);
-
-        fs.writeFile('data.json', JSON.stringify(avisos), (err) => {
-            if (err) return res.status(500).send('Erro ao salvar dados');
-            res.json(novoAviso);
-        });
-    });
+// Rota padrão para servir o index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Rota para editar um aviso
-app.put('/api/avisos/:id', (req, res) => {
-    fs.readFile('data.json', 'utf8', (err, data) => {
-        if (err) return res.status(500).send('Erro ao ler dados');
-
-        let avisos = JSON.parse(data);
-        const avisoId = parseInt(req.params.id);
-        const avisoIndex = avisos.findIndex(aviso => aviso.id === avisoId);
-
-        if (avisoIndex === -1) return res.status(404).send('Aviso não encontrado');
-
-        avisos[avisoIndex] = { id: avisoId, ...req.body };
-
-        fs.writeFile('data.json', JSON.stringify(avisos), (err) => {
-            if (err) return res.status(500).send('Erro ao salvar dados');
-            res.json(avisos[avisoIndex]);
-        });
-    });
-});
-
-// Rota para deletar um aviso
-app.delete('/api/avisos/:id', (req, res) => {
-    fs.readFile('data.json', 'utf8', (err, data) => {
-        if (err) return res.status(500).send('Erro ao ler dados');
-
-        let avisos = JSON.parse(data);
-        const avisoId = parseInt(req.params.id);
-        avisos = avisos.filter(aviso => aviso.id !== avisoId);
-
-        fs.writeFile('data.json', JSON.stringify(avisos), (err) => {
-            if (err) return res.status(500).send('Erro ao salvar dados');
-            res.sendStatus(204);
-        });
-    });
-});
-
+// Inicia o servidor
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
