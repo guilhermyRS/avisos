@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Avisos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto mt-10">
+        <h1 class="text-2xl font-bold mb-5">Gerenciar Avisos</h1>
+        <form id="avisoForm" class="mb-5 space-y-2">
+            <input type="text" id="docente" placeholder="Docente" class="border p-2 w-full">
+            <input type="text" id="sala" placeholder="Sala" class="border p-2 w-full">
+            <input type="text" id="horario" placeholder="Horário" class="border p-2 w-full">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2">Adicionar Aviso</button>
+        </form>
+        <div id="avisosContainer" class="space-y-4"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
